@@ -29,9 +29,15 @@
  *
  */
 
-function isDebugMode() {
-  // code here
-}
+const isDebugMode = () => {
+  const nodeEnv = process.env.NODE_ENV;
+  const debugMode = nodeEnv === 'development';
+  
+  console.log(`Current NODE_ENV: ${nodeEnv}`);
+  console.log(`Debug mode: ${debugMode}`);
+  
+  return debugMode;
+};
 
 /*
  *
@@ -69,34 +75,76 @@ function isDebugMode() {
 
 // Функції для кодування даних з довільною кількістю аргументів
 function encodeToBase64(...args) {
-  // code here
+  try {
+    const joinedString = args.join(':');
+    console.log('Encoding to Base64:', joinedString);
+    
+    const base64Encoded = Buffer.from(joinedString, 'utf8').toString('base64');
+    console.log('Base64 result:', base64Encoded);
+    
+    return base64Encoded;
+  } catch (error) {
+    console.error('Error encoding to Base64:', error.message);
+    throw error;
+  }
 }
 
 function encodeToHex(...args) {
-  // code here
+  try {
+    const joinedString = args.join(':');
+    console.log('Encoding to Hex:', joinedString);
+    
+    const hexEncoded = Buffer.from(joinedString, 'utf8').toString('hex');
+    console.log('Hex result:', hexEncoded);
+    
+    return hexEncoded;
+  } catch (error) {
+    console.error('Error encoding to Hex:', error.message);
+    throw error;
+  }
 }
 
 // Функції для декодування даних
 function decodeFromBase64(base64String) {
-  // code here
+  try {
+    console.log('Decoding from Base64:', base64String);
+    
+    const decoded = Buffer.from(base64String, 'base64').toString('utf8');
+    console.log('Base64 decoded result:', decoded);
+    
+    return decoded;
+  } catch (error) {
+    console.error('Error decoding from Base64:', error.message);
+    throw error;
+  }
 }
 
 function decodeFromHex(hexString) {
-  // code here
+  try {
+    console.log('Decoding from Hex:', hexString);
+    
+    const decoded = Buffer.from(hexString, 'hex').toString('utf8');
+    console.log('Hex decoded result:', decoded);
+    
+    return decoded;
+  } catch (error) {
+    console.error('Error decoding from Hex:', error.message);
+    throw error;
+  }
 }
 
 // ! Приклад використання:
-// const base64Encoded = encodeToBase64('john@email.com', '123', 'extraData')
-// console.log('Base64 Encoded:', base64Encoded)
+const base64Encoded = encodeToBase64('john@email.com', '123', 'extraData')
+console.log('Base64 Encoded:', base64Encoded)
 //
-// const hexEncoded = encodeToHex('john@email.com', '123', 'extraData')
-// console.log('Hex Encoded:', hexEncoded)
+const hexEncoded = encodeToHex('john@email.com', '123', 'extraData')
+console.log('Hex Encoded:', hexEncoded)
 //
-// const base64Decoded = decodeFromBase64(base64Encoded)
-// console.log('Base64 Decoded:', base64Decoded)
+const base64Decoded = decodeFromBase64(base64Encoded)
+console.log('Base64 Decoded:', base64Decoded)
 //
-// const hexDecoded = decodeFromHex(hexEncoded)
-// console.log('Hex Decoded:', hexDecoded)
+const hexDecoded = decodeFromHex(hexEncoded)
+console.log('Hex Decoded:', hexDecoded)
 
 /*
  *
@@ -132,19 +180,107 @@ function decodeFromHex(hexString) {
  */
 
 function safeDecodeFromBase64(base64String) {
-  // code here
+  try {
+    // Перевірка валідності Base64 рядка
+    const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+    
+    if (!base64String || typeof base64String !== 'string') {
+      throw new Error('Invalid base64 string');
+    }
+    
+    if (!base64Regex.test(base64String)) {
+      throw new Error('Invalid base64 string');
+    }
+    
+    console.log('Safe decoding from Base64:', base64String);
+    
+    const decoded = Buffer.from(base64String, 'base64').toString('utf8');
+    console.log('Safe Base64 decoded result:', decoded);
+    
+    return decoded;
+  } catch (error) {
+    console.error('Error in safe Base64 decoding:', error.message);
+    throw new Error('Invalid base64 string');
+  }
 }
 
 function safeDecodeFromHex(hexString) {
-  // code here
+  try {
+    // Перевірка валідності Hex рядка
+    const hexRegex = /^[0-9a-fA-F]*$/;
+    
+    if (!hexString || typeof hexString !== 'string') {
+      throw new Error('Invalid hex string');
+    }
+    
+    if (!hexRegex.test(hexString)) {
+      throw new Error('Invalid hex string');
+    }
+    
+    // Перевірка на парну кількість символів
+    if (hexString.length % 2 !== 0) {
+      throw new Error('Invalid hex string');
+    }
+    
+    console.log('Safe decoding from Hex:', hexString);
+    
+    const decoded = Buffer.from(hexString, 'hex').toString('utf8');
+    console.log('Safe Hex decoded result:', decoded);
+    
+    return decoded;
+  } catch (error) {
+    console.error('Error in safe Hex decoding:', error.message);
+    throw new Error('Invalid hex string');
+  }
 }
 
-// ! Приклад використання:
-// const safeBase64Decoded = safeDecodeFromBase64(base64Encoded)
-// console.log('Safe Base64 Decoded:', safeBase64Decoded)
-//
-// const safeHexDecoded = safeDecodeFromHex(hexEncoded)
-// console.log('Safe Hex Decoded:', safeHexDecoded)
+// Приклад використання:
+console.log('\n=== Демонстрація роботи функцій ===\n');
+
+// Тестування isDebugMode
+console.log('1. Тестування isDebugMode:');
+const debugMode = isDebugMode();
+console.log('Result:', debugMode);
+
+console.log('\n2. Тестування кодування/декодування:');
+
+// Тестування кодування
+const testBase64Encoded = encodeToBase64('john@email.com', '123', 'extraData');
+console.log('Base64 Encoded:', testBase64Encoded);
+
+const testHexEncoded = encodeToHex('john@email.com', '123', 'extraData');
+console.log('Hex Encoded:', testHexEncoded);
+
+// Тестування декодування
+const testBase64Decoded = decodeFromBase64(testBase64Encoded);
+console.log('Base64 Decoded:', testBase64Decoded);
+
+const testHexDecoded = decodeFromHex(testHexEncoded);
+console.log('Hex Decoded:', testHexDecoded);
+
+console.log('\n3. Тестування безпечного декодування:');
+
+// Тестування безпечного декодування
+const safeBase64Result = safeDecodeFromBase64(testBase64Encoded);
+console.log('Safe Base64 Decoded:', safeBase64Result);
+
+const safeHexResult = safeDecodeFromHex(testHexEncoded);
+console.log('Safe Hex Decoded:', safeHexResult);
+
+// Тестування з невалідними даними
+console.log('\n4. Тестування з невалідними даними:');
+
+try {
+  safeDecodeFromBase64('invalid@base64!');
+} catch (error) {
+  console.log('Expected error for invalid Base64:', error.message);
+}
+
+try {
+  safeDecodeFromHex('invalid_hex_string');
+} catch (error) {
+  console.log('Expected error for invalid Hex:', error.message);
+}
 
 export {
   isDebugMode,
